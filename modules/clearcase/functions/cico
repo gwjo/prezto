@@ -1,0 +1,37 @@
+#eval compdef -n _parse_opts cico
+# ZSH function file
+# Part of the clearcase package
+# Checkin checked out files
+#
+# $Id: cico 792 2003-09-22 11:47:18Z martin $
+
+local -A opts
+parse_opts - opts -- "$argv[@]" <<'EOF' || return 1
+Description:
+Checkin checked out Clearcase files.
+
+Usage:
+cico [options]
+
+Options:
+  -h, --help                    Provide this help
+                # --help | -h * excludes=*
+  -r, --recurse                 Recurse through directories looking for files
+                # --recurse | -r : constant=-r
+EOF
+
+local -a files
+files=($(cleartool lscheckout -me -cview -short $opts[recurse]))
+
+if [[ -n $files ]]
+then
+  echo "Check in all of these files?"
+  echo - ${(F)files}
+  if read -q
+    then
+    cleartool ci -cq $files
+  fi
+else
+  echo "No files checked out."
+fi
+

@@ -1,0 +1,176 @@
+#compdef sipp
+#
+# Created by Alexander Myodov <maa_public@sinn.ru>
+# See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=538069
+#
+
+local context state line
+typeset -A opt_args
+
+bools="( true false)"
+
+arguments=(
+    '-v[display version and copyright information]'
+    '-aa[enable automatic 200 OK answer for INFO, UPDATE and NOTIFY messages]'
+    '-auth_uri[force the value of the URI for authentication; default remote_ip:remote_port]:auth URI'
+    '-base_cseq[start value of cseq for each call]:start value of cseq'
+    '-bg[launch SIPp in background mode]'
+    '-bind_local[bind socket to local IP address]'
+    '-buff_size[send/receive buffer size]:buffer size'
+    '-calldebug_file[call debug file]:call debug file'
+    '-calldebug_overwrite[overwrite the call debug file, default "true"]:overwrite the call debug file:'$bools
+    '-cid_str[call ID string (default "%u-%p@%s")]:call ID string (default %%u-%%p@%%s), %%u=call_number, %%s=ip_address, %%p=process_number, %%%%=%%'
+    '-ci[local control IP address]:local control IP address'
+    '-cp[local control port number, default 8888]:local control port'
+    '-d[length of the calls, default "0s", ms]:length of the calls, ms'
+    '-deadcall_wait[how long the Call-ID and final status of calls should be kept to improve message and error logs, ms]:dead call wait, ms'
+    '-default_behaviors[default behaviors that SIPp will use]:default behaviors:->default_behaviors'
+    '-error_file[error log file]:error log file'
+    '-error_overwrite[overwrite the error log file, default "true"]:overwrite the error log file:'$bools
+    '-f[statistics screen report frequency, default 1, seconds]:statistics screen report frequency, seconds'
+    '-fd[statistics dump log report frequency, default 60, seconds]:statistics dump log report frequency, seconds'
+    '(-h, --help)'{-h,--help}'[show help]'
+    '-i[local IP address for "Contact:", "Via:" and "From:" headers; default is primary host IP address]:local IP address'
+    '-inf[inject values from an external CSV file during calls into the scenarios]:CSV file:_files -g \*.csv'
+    '-infindex[create an index of the file using the field]:CSV file:_files -g \*.csv:field number'
+    '-ip_field[which field from the injection file contains the IP address from which the client will send its messages]:field number'
+    '-l[maximum number of simultaneous calls, default 3 * call_duration * rate]:maximum number of simultaneous calls'
+    '-log_file[actions log file]:actions log file'
+    '-log_overwrite[overwrite the log actions log file, default "true"]:overwrite the actions log file:'$bools
+    '-lost[number of packets to lose by default]:number of packets to lose]'
+    '-rtcheck[retransmission detection method, default "full"]:retransmission detection method:( full loose )'
+    '-m[stop the test and exit when this number of calls are processed]:number of calls'
+    '-mi[local media IP address, default is local primary host IP address]:local media IP address'
+    '-master[3pcc extended mode: master number]:3PCC\: master number'
+    '-max_recv_loops[maximum number of messages received per cycle, default 1000]:maximum number of messages per read cycle'
+    '-max_sched_loops[maximum number of calls run per event loop, default 1000]:maximum number of calls run'
+    '-max_reconnect[maximum number of reconnections]:maximum number of reconnections'
+    '-max_retrans[maximum number of UDP retransmissions before call ends on timeout, default 5 for INVITE transactions and 7 for others]:maximum number of UDP retransmissions before timeout'
+    '-max_invite_retrans[maximum number of UDP retransmissions for INVITE transactions before call ends on timeout]:maximum number of UDP retransmissions for INVITE transactions before timeout'
+    '-max_non_invite_retrans[maximum number of UDP retransmissions for non-INVITE transactions before call ends on timeout]:maximum number of UDP retransmissions for non-INVITE transactions before timeout'
+    '-max_log_size[error/message log file size limit]:error/message log file size limit'
+    '-max_socket[maximum number of sockets to open simultaneously, default 50000]:maximum number of sockets to open simultaneously'
+    '-mb[RTP echo buffer size, default 2048]:RTP echo buffer size'
+    '-message_file[message log file]:message log file'
+    '-message_overwrite[overwrite the message log file, default "true"]:overwrite the message log file:'$bools
+    '-mp[local RTP echo port number, default 6000]:local RTP echo port'
+    '-nd[No Default - disable all default behavior of SIPp]'
+    '-nr[disable retransmission in UDP mode]'
+    '-nostdin[disable STDIN]'
+    '-p[local port number, default is a random free port]:local port'
+    '-pause_msg_ign[ignore the messages received during a pause defined in the scenario]'
+    '-periodic_rtd[reset response time partition counters each logging interval]'
+    '-plugin[load a plugin]:plugin'
+    '-r[the call rate, CPS]:call rate, CPS'
+    '-rp[rate period for the call rate, default "1s", ms]:rate period for the call rate, ms'
+    '-rate_scale[units for the "+", "-", "*", "/" keys]:units for the "+", "-", "*", "/" keys'
+    '-rate_increase[rate increase every -fd units, seconds]:rate increase every -fd units, seconds'
+    '-rate_max[if -rate_increase is set, then quit after the rate reaches this value]:if -rate_increase is set, then quit after the rate reaches this value'
+    '-no_rate_quit[if -rate_increase is set, do not quit after the rate reaches -rate_max]'
+    '-recv_timeout[global receive timeout to abort the call, ms]:global receive timeout, ms'
+    '-send_timeout[global send timeout to abort the call, ms]:global send timeout, ms'
+    '-sleep[sleep time at startup, seconds]:sleep at startup, seconds'
+    '-reconnect_close[whether to close the calls on reconnect]:close the calls on reconnect:'$bools
+    '-reconnect_sleep[sleep time between closing the call and reconnection, ms]:sleep time between closing the call and reconnection, ms'
+    '-ringbuffer_files[error/message files count to keep after rotation]:count of files kept after rotation'
+    '-ringbuffer_size[error/message files size for rotation]:files size for rotation'
+    '-rsa[remote sending address for sending the messages, format: "host:port"]:remote sending address, format: "host:port"'
+    '-rtp_echo[enable RTP echo]'
+    '-rtt_freq[call count between dumping response times, default 200]:call count between dumping response times'
+    '-s[username part of request URI, default "service"]:username part of request URI'
+    '-sd[dump default scenario]'
+    '-sf[load alternate XML scenario file]:XML scenario file:_files -g \*.xml'
+    '-shortmessage_file[short message log file]:short message log file'
+    '-shortmessage_overwrite[overwrite the short message log file, default "true"]:overwrite the short message log file:'$bools
+    '(-oocsf -oocsn)'{-oocsf,-oocsn}'[load out-of-call scenario]:XML file for out-of-call scenario:_files -g \*.xml'
+    '-skip_rlimit[do not perform rlimit tuning of file descriptor limits]'
+    '-slave[3pcc extended mode: slave number]:3PCC\: slave number'
+    '-slave_cfg[3pcc extended mode: the file where the master and slave addresses are stored]:3PCC\: the file with master and slave addresses:_files'
+    '-sn[use an embedded default scenario, default "uac"]:default scenario:->sn'
+    '-stat_delimiter[statistics file delimiter]:statistics file delimiter'
+    '-stf[statistics dump file]:statistics dump file'
+    '-t[transport mode, default "u1"]:transport mode:->t'
+    '-timeout[global timeout, seconds]:global timeout, seconds'
+    '-timeout_error[SIPp fails if the global timeout is reached (-timeout option required)]'
+    '-timer_resol[timer resolution, "10ms", ms]:timer resolution, ms'
+    '-sendbuffer_warn[whether to produce warnings instead of errors on SendBuffer failures]:warnings instead of errors on SendBuffer failures?:'$bools
+    '-trace_msg[trace sent and received SIP messages]'
+    '-trace_shortmsg[trace sent and received SIP messages as CSV]'
+    '-trace_screen[dump statistic screens on quitting SIPp]'
+    '-trace_err[trace all unexpected messages]'
+    '-trace_calldebug[dump debugging informations about aborted calls]'
+    '-trace_stat[dump all statistics]'
+    '-trace_counts[dump individual message counts]'
+    '-trace_rtt[trace all response times]'
+    '-trace_logs[trace log actions]'
+    '-users[instead of starting calls at a fixed rate, begin "users" calls at startup, and keep the number of calls constant]:constant number of user calls'
+    '-watchdog_interval[gap between watchdog timer firings, default 400]:gap between watchdog timer firings'
+    '-watchdog_reset[reset max triggers counters if the watchdog timer has not fired in more than this time period, default 10 minutes]:reset max triggers counters period'
+    '-watchdog_minor_threshold[if it has been longer than this period between watchdog executions count a minor trip, default 500]:minor trip period'
+    '-watchdog_major_threshold[if it has been longer than this period between watchdog executions count a major trip, default 3000]:major trip period'
+    '-watchdog_major_maxtriggers[major watchdog timer trip count before the test is terminated, default 10]:major watchdog timer trip for termination'
+    '-watchdog_minor_maxtriggers[minor watchdog timer trip count before the test is terminated, default 120]:minor watchdog timer trip for termination'
+    '-ap[password for authentication challenges, default "password"]:password for authentication challenges'
+    '-tls_cert[TLS Certificate file, default "cacert.pem"]:TLS Certificate file:_files -g \*.pem'
+    '-tls_key[TLS Private Key file, default "cakey.pem"]:TLS Private Key file:_files -g \*.pem'
+    '-tls_crl[Certificate Revocation List file]:Certificate Revocation List file:_files'
+    '-3pcc[3pcc mode ("Third Part call control")]'
+    '-tdmmap[generate and handle a table of TDM circuits, format: "{0-3}{99}{5-8}{1-31}"]:table of TDM circuits, format: "{0-3}{99}{5-8}{1-31}"'
+    '-key[set keyword to value]:keyword name::value'
+    '-set[set variable to value]:variable name::value'
+    '-dynamicStart[set the start offset of dynamic_id variable to value]:variable name::value'
+    '-dynamicMax[set the maximum of dynamic_id variable to value]:variable name::value'
+    '-dynamicSetp[set the increment of dynamic_id variable to value]:variable name::value'
+    '*:host:_hosts'
+)
+
+_arguments "$arguments[@]" && return 0
+
+case $state in
+    (default_behaviors)
+        _values -s , "behaviors list" \
+            'all[use all default behaviors]' \
+            'none[use no default behaviours]' \
+            'bye[send byes for aborted calls]' \
+            'abortunexp[abort calls on unexpected messages]' \
+            'pingreply[reply to ping requests]' \
+            '-all[disable using all default behaviors]' \
+            '-none[disable using no default behaviours]' \
+            '-bye[disable sending byes for aborted calls]' \
+            '-abortunexp[disable aborting calls on unexpected messages]' \
+            '-pingreply[disable replying to ping requests]' \
+            && return 0
+        ;;
+    (sn)
+        default_scenarios="uac uas regexp branchc branchs 3pcc-C-A 3pcc-C-B 3pcc-A 3pcc-B"
+        _values "default scenario" \
+            "($default_scenarios)uac[standard SipStone UAC (default)]" \
+            "($default_scenarios)uas[simple UAS responder]" \
+            "($default_scenarios)regexp[standard SipStone UAC with regexp and variables]" \
+            "($default_scenarios)branchc[branching and conditional branching in scenarios - client]" \
+            "($default_scenarios)branchs[branching and conditional branching in scenarios - server]" \
+            "($default_scenarios)3pcc-C-A[3PCC: controller A side]" \
+            "($default_scenarios)3pcc-C-B[3PCC: controller B side]" \
+            "($default_scenarios)3pcc-A[3PCC: A side]" \
+            "($default_scenarios)3pcc-B[3PCC: B side]" \
+            && return 0
+        ;;
+    (t)
+        transports="u1 un ui t1 tn l1 ln c1 cn"
+        _values "transport mode" \
+            "($transports)u1[UDP with one socket (default)]" \
+            "($transports)un[UDP with one socket per call]" \
+            "($transports)ui[UDP with one socket per IP address]" \
+            "($transports)t1[TCP with one socket]" \
+            "($transports)tn[TCP with one socket per call]" \
+            "($transports)l1[TLS with one socket]" \
+            "($transports)ln[TLS with one socket per call]" \
+            "($transports)c1[UDP with one socket + compression]" \
+            "($transports)cn[UDP with one socket per call + compression]" \
+            && return 0
+        ;;
+esac
+
+return 1
+
+

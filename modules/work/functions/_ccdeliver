@@ -1,0 +1,15 @@
+#compdef ccdeliver
+#autoload
+
+_arguments \
+    '(-help)-g[use ClearCase graphical delivery program]' \
+    '(-help)-n[do not update the intregration view]' \
+    - help  \
+        '(-g -n)-help' \
+    - complete \
+        '-complete[complete the delivery]' \
+    - cancel \
+        '-cancel[cancel a delivery]' \
+    - resume \
+        '-resume[resume a suspended delivery]'
+

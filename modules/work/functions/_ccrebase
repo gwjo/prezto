@@ -1,0 +1,19 @@
+#compdef ccrebase
+#autoload
+
+_arguments \
+    '(-help)-g[use ClearCase graphical rebase program]' \
+    - help  \
+        '(-g)-help' \
+    - start \
+        '-preview[preview baseline]' \
+        '-from[rebase to a different project]:project:->project' \
+        '(   -mibs -nomibs -rec -latest -complete -resume -cancel)-baseline[rebase to a specific baseline]:baseline:' \
+        '(-baseline       -nomibs -rec -latest -complete -resume -cancel)-mibs[rebase just the mibs to a specific baseline]:baseline:' \
+        '(-baseline -mibs         -rec -latest -complete -resume -cancel)-nomibs[rebase everything but the mibs to a specific baseline]:baseline:' \
+        '(-baseline -mibs -nomibs      -latest -complete -resume -cancel)-rec[rebase to the recommended baseline(default)]' \
+        '(-baseline -mibs -nomibs -rec    -complete -resume -cancel)-latest[rebase to the latest baseline]' \
+    - finish \
+        '(-resume -cancel)-complete[complete the rebase]' \
+        '(-complete -cancel)-resume[resume a suspended rebase]' \
+        '(-complete -resume)-cancel[cancel a rebase]' \

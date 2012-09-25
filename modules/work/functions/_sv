@@ -1,0 +1,7 @@
+#compdef sv
+
+_arguments \
+   '(-i)-h[Help]' \
+   '(-h)-i[Switch to integration view]' \
+   '*:[ClearCase View]:_path_files -W "$HOME/cc/" -g "*[^ingetration](#i)(/)"'
+

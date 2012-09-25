@@ -1,0 +1,98 @@
+#autoload
+
+function sv {
+    setopt    local_options \
+           NO_xtrace        \
+              extended_glob
+
+    local integration
+    local opt
+    local view
+    local view1
+
+    #
+    # if there are no arguments, just echo current view
+    #
+    if [[ -z $1 ]] ; then
+        view=$(/usr/local/acme/bin/ccbase 2> /dev/null)
+
+        if [[ -z $view ]] ; then
+            echo "Not in a view"
+            return 1
+        else
+            echo ${view:t}
+            return 0
+        fi
+    fi
+        
+    
+    while getopts hi opt; do
+        # loop continues till options finished
+        case $opt in
+            (i)
+                integration="true"
+                ;;
+            (*)
+                _sv_help
+                return 0
+                ;;
+            (\?)
+                _sv_help
+                return 1
+
+        esac
+    done
+    (( OPTIND > 1)) && shift $(( OPTIND - 1 ))
+
+    if [[ -n $integration && -z $1 ]] ; then
+        #
+        # single -i with no view means toggle between
+        # integration view
+        #
+        view=$(/usr/local/acme/bin/ccbase 2> /dev/null)
+
+        if [[ -z $view ]] ; then
+            _sv_help
+            return 1
+        else
+            view1=${view/_integration/}
+            [[ $view == ${view1} ]] && view1=${view}_integration
+            view=${view1}
+        fi
+
+    elif [[ -z $1 || -n $2 ]] ; then;
+        #
+        # else must be a single option
+        #
+        _sv_help
+        return 127
+    fi
+
+    # full path
+    if [[ -z $view && -d $1 ]] ; then;
+        view=$1
+    fi
+
+    # view name directory
+    if [[ -z $view ]] ; then
+        if [[ -z $integration ]] ; then
+            view=(${HOME}/cc/(|gowen_)(#i)$1(:/))
+        else
+            view=(${HOME}/cc/(|gowen_)(#i)${1}_integration(:/))
+        fi
+    fi
+
+    # check that view exists
+    { cd ${~view} } 2> /dev/null
+
+    # echo the view to the command line
+    view=$(pwd)
+    echo ${view:t}
+}
+
+function _sv_help {
+    print "sv [-i] <view>"
+}
+
+
+sv $@
