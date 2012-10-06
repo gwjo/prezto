@@ -13,6 +13,7 @@ Functions
   - `is-callable` checks if a name is a command, function, or alias.
   - `is-true` checks a boolean variable for "true".
   - `coalesce` prints the first non-empty string in the arguments array.
+  - `xalias` adds alias after checking command is executable
 
 Authors
 -------

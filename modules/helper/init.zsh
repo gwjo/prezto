@@ -30,3 +30,22 @@ function coalesce {
   return 1
 }
 
+# Creates alias if command exists
+#  Usage:  xalias "vp=vim -p"
+function xalias {
+  local key val com
+  if (( ${#argv} == 0 )) ; then
+    printf "xalias(): Missing argument.\n"
+    return 1
+  fi
+  if (( ${#argv} > 1 )) ; then
+    printf "xalias(): Too many arguments %s\b" "${#argv}"
+    return 1
+  fi
+
+  key="${1%%\=*}"; val="${1#*\=}"
+  com=${${(z)val}[1]}
+
+  is-callable $com && alias -- "$key=$val"
+  return 0
+}
