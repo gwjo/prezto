@@ -31,7 +31,7 @@ function coalesce {
 }
 
 # Creates alias if command exists
-#  Usage:  xalias "vp=vim -p"
+#  Usage:  xalias vp='vim -p'
 function xalias {
   local key val com
   if (( ${#argv} == 0 )) ; then
