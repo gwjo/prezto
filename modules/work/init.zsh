@@ -139,6 +139,9 @@ alias wireshark='wireshark -a filesize:102400'
 alias uas='sipp -bind_local -i 192.168.138.210 -sf '
 alias uac='sipp -bind_local -i 192.168.140.210 192.168.140.211 -sf '
 
+alias rsh='/usr/bin/rsh'
+alias rcp='/usr/bin/rcp'
+
 ## }}}
 ## {{{ set CCBASE environment variable
 
@@ -203,8 +206,8 @@ function setup_sd_env() {
     $WIND_VERSION
 
     # Restore TCLLIBPATH
-    TCLLIBPATH=${savedTclLibPath}}
-
+    TCLLIBPATH=${savedTclLibPath}
+}
 ## }}}
 ## {{{ Objdump (by default ppc)
 
@@ -243,14 +246,14 @@ function sd_objdump() {
                 ;;
             (h|\?)
                 echo >&2 \
-                "usage:  $0 [-a] [-s] [-o objectfile] <start address> <end address>"
-                         $0 [-t] [-o objectfile]
+                "usage:  $0 [-a] [-s] [-o objectfile] <start address> <end address>" \
+                "        $0 [-t] [-o objectfile]"
 
                 return 1
                 ;;
         esac
     done
-    (( OPTIND > 1)) && shift $(( OPTIND - 1 ))
+    (( OPTIND > 1 )) && shift $(( OPTIND - 1 ))
 
 
     if [[ -z ${2} && ${baseOpt} != "t" ]]; then
@@ -269,7 +272,7 @@ function sd_objdump() {
         fi
     fi
 
-    set_sd_env()
+    setup_sd_env
 
     # always use wide-screen and demangle names options
     echo "$dumpCmd -wC${baseOpt}${disOpt}${sourceOpt} --start-address=${1} --stop-address=${2} $objectfile"
