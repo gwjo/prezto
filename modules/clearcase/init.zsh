@@ -49,7 +49,7 @@ function ctpdiff() {
     local mode="pre"
     local disOpt="-graphical"
 
-    while getopts hx opt; do
+    while getopts hix opt; do
         case $opt in
             (h)
                 mode="hijack"
@@ -62,20 +62,21 @@ function ctpdiff() {
                 ;;
         esac
     done
+    (( OPTIND > 1 )) && shift $(( OPTIND - 1 ))
 
-    
     case $mode in
-        (hijack)
-            base=$(cleartool ls $2 | grep hijacked | cut -d " " -f 1)
+        hijack)
+            base=$(cleartool ls $1 | grep hijacked | cut -d " " -f 1)
             ;;
-        (pre)
-            disOpt="$disOpt -pre"
+        pre)
+            disOpt="-pred ${disOpt}"
             ;;
-        (integration)
+        integration)
             echo "Not currently supported"
+            exit
             ;;
     esac
 
-    cleartool diff $disOpt $1
+    cleartool diff ${=disOpt} $base $1
 
 }
