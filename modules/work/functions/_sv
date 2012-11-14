@@ -3,5 +3,6 @@
 _arguments \
    '(-i)-h[Help]' \
    '(-h)-i[Switch to integration view]' \
+   '(-h)-k[Keep current sub-directory after switching]' \
    '*:[ClearCase View]:_path_files -W "$HOME/cc/" -g "*[^ingetration](#i)(/)"'
 

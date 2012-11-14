@@ -6,9 +6,11 @@ function sv {
               extended_glob
 
     local integration
+    local keep
     local opt
     local view
     local view1
+    local subdir
 
     #
     # if there are no arguments, just echo current view
@@ -26,11 +28,14 @@ function sv {
     fi
         
     
-    while getopts hi opt; do
+    while getopts hik opt; do
         # loop continues till options finished
         case $opt in
             (i)
                 integration="true"
+                ;;
+            (k)
+                keep="true"
                 ;;
             (*)
                 _sv_help
@@ -44,7 +49,24 @@ function sv {
     done
     (( OPTIND > 1)) && shift $(( OPTIND - 1 ))
 
-    if [[ -n $integration && -z $1 ]] ; then
+    if [[ -n $keep ]] ; then
+        # get the current sub-directory so we
+        # can cd to it after switching views
+        view1=$(/usr/local/acme/bin/ccbase 2> /dev/null)
+
+        # just ignore the error if there isn't a current
+        # view
+        if [[ -n $view1 ]] ; then
+          subdir=${PWD#"${view1}/"}
+        fi
+
+        # clear subdir if the above substitution failed
+        if [[ "$PWD" == "$subdir" ]] ; then
+          subdir=""
+        fi
+    fi
+
+    if [[ ( -n $integration || -n $keep ) && -z $1 ]] ; then
         #
         # single -i with no view means toggle between
         # integration view
@@ -82,16 +104,20 @@ function sv {
         fi
     fi
 
+
+    # add subdir
+    [[ -n $subdir ]] && view="$view/$subdir"
+
     # check that view exists
     { cd ${~view} } 2> /dev/null
 
     # echo the view to the command line
-    view=$(pwd)
+    view=$(/usr/local/acme/bin/ccbase 2> /dev/null)
     echo ${view:t}
 }
 
 function _sv_help {
-    print "sv [-i] <view>"
+    print "sv [-i] [-k] <view>"
 }
 
 
